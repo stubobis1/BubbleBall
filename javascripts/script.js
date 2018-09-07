@@ -34,7 +34,7 @@ var obstacleTypes = {
         maxStartHeight: 50,
         speed: 2,
     },
-}
+};
 
 ///////////////////////////////////////////////
 /// FUNCTIONS
@@ -62,11 +62,11 @@ function init() {
 
     // set the opening text that displays on the canvas
     ctx.fillStyle = '#f1f1f1';
-    ctx.font = '14px monospace';
-    ctx.fillText('PRESS THE LEFT OR RIGHT ARROW KEY TO START', 222, 200);
+    ctx.font = '16px monospace';
+    ctx.fillText('PRESS THE LEFT OR RIGHT ARROW KEY TO START', 198, 200);
 }
 
-// Locator function in a loop
+// Main game loop
 function mainLoop() {          
     // logic for the game to end or not
     if (gameIsInProgress && !gameOver) {
@@ -78,7 +78,7 @@ function mainLoop() {
     } else {
         handleGameOver();
     }
-};
+}
 
 // Update game piece positions
 function update() {
@@ -117,9 +117,7 @@ function update() {
             }
         }
     } 
-
-    return true;
-};
+}
 
 // Draw everything
 function draw() {
@@ -147,7 +145,7 @@ function draw() {
             ctx.stroke();
         }
     }
-};
+}
 
 // Add a new obstacle
 function addObstacle() {
@@ -162,7 +160,7 @@ function addObstacle() {
     });
     score++;
     document.getElementById('scoreValue').innerHTML = score;
-};
+}
 
 // Handle logic when the game ends
 function handleGameOver() {
@@ -171,8 +169,8 @@ function handleGameOver() {
         
     // set the text that displays on the canvas
     ctx.fillStyle = '#f1f1f1';
-    ctx.font = '20px monospace';
-    ctx.fillText('GAME OVER', 345, 100);
+    ctx.font = '16px monospace';
+    ctx.fillText('GAME OVER', 355, 200);
 
     // update your high score
     if (score > highscore) {
@@ -180,8 +178,9 @@ function handleGameOver() {
         document.getElementById('highscoreValue').innerHTML = highscore;
     }
 
+    // restart the game
     setTimeout(init, 2000);
-};
+}
 
 ///////////////////////////////////////////////
 /// EVENT HANDLERS
@@ -189,8 +188,7 @@ function handleGameOver() {
 
 // Move your player on keydown
 document.onkeydown = function(e) {
-    var theKey = e.keyCode;
-    switch (theKey) {
+    switch (e.which) {
         // Controls
         case 37: // Left
             if (!gameIsInProgress && !gameOver) {
@@ -209,14 +207,13 @@ document.onkeydown = function(e) {
             player.right = true;
             break;
         default:
-            // do nothing
+            // Do nothing
     };
 };
 
 // Stop moving your player on keyup
 document.onkeyup = function(e) {
-    var theKey = e.keyCode;
-    switch (theKey) {
+    switch (e.which) {
         // Controls
         case 37: // Left
             player.left = false; // Will take priority over the right key
@@ -225,7 +222,7 @@ document.onkeyup = function(e) {
             player.right = false;
             break;
         default:
-            // do nothing
+            // Do nothing
     };
 };
 
