@@ -40,9 +40,9 @@ var obstacleTypes = {
 
 // Initialize variables when the game starts and draw the first frame
 function init() {
-    // TODO: Write init function. This will kick off the game
     gameIsInProgress = false;
     gameOver = false;
+    score = 0;
     player = {
         size: 20,
         x: 400,
@@ -53,6 +53,8 @@ function init() {
     };
     obstacles = [];
     obstacleGeneratorInterval = undefined;
+
+    document.getElementById('scoreValue').innerHTML = score;
 
     draw();
 
@@ -86,7 +88,7 @@ function update() {
             player.x += player.speed;
         };
 
-        // Move the obstacles
+        // Move the obstacles and check if the player was hit
         for (var i = 0; i < obstacles.length; i++) {
             var obstacle = obstacles[i];
             
@@ -112,7 +114,7 @@ function update() {
                 gameOver = true;
             }
         }
-    }
+    } 
 }
 
 // Draw everything
@@ -154,6 +156,8 @@ function addObstacle() {
         dx: direction,
         dy: 1,
     });
+    score++;
+    document.getElementById('scoreValue').innerHTML = score;
 }
 
 // Handle logic when the game ends
@@ -165,6 +169,12 @@ function handleGameOver() {
     ctx.fillStyle = '#f1f1f1';
     ctx.font = '16px monospace';
     ctx.fillText('GAME OVER', 355, 200);
+
+    // update your high score
+    if (score > highscore) {
+        highscore = score;
+        document.getElementById('highscoreValue').innerHTML = highscore;
+    }
 
     // restart the game
     setTimeout(init, 2000);
