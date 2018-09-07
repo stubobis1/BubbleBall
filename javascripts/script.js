@@ -3,6 +3,7 @@
 ///////////////////////////////////////////////
 
 // TODO: Create game variables
+var player;
 
 ///////////////////////////////////////////////
 /// FUNCTIONS
@@ -11,6 +12,21 @@
 // Initialize variables when the game starts and draw the first frame
 function init() {
     // TODO: Write init function. This will kick off the game
+    player = {
+        size: 20,
+        x: 400,
+        y: 390,
+        speed: 4,
+        left: false,
+        right: false,
+    };
+
+    draw();
+
+    // set the opening text that displays on the canvas
+    ctx.fillStyle = '#f1f1f1';
+    ctx.font = '16px monospace';
+    ctx.fillText('PRESS THE LEFT OR RIGHT ARROW KEY TO START', 198, 200);
 }
 
 // Main game loop
@@ -26,6 +42,13 @@ function update() {
 // Draw everything
 function draw() {
     // TODO: Write the draw function. This handles drawing our content on the canvas
+    // Draw the player
+    ctx.beginPath();
+    ctx.fillStyle = '#f2f2f2';
+    ctx.arc(player.x, player.y, player.size / 2, 0, Math.PI * 2);
+    ctx.lineWidth = 1;
+    ctx.fill();
+    ctx.stroke();
 }
 
 // Add a new obstacle
