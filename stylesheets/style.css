@@ -1,0 +1,18 @@
+/* GENERAL */
+body {
+  padding: 20px;
+  font-family: monospace;
+  text-align: center;
+  background: #add8e6;
+  color: #1F271B;
+}
+
+/* GAME */
+#gameCanvas {
+	height: 400px;
+	width: 800px;
+	background: #143642;
+	border: solid 1px #fff;
+	margin: auto;
+	cursor: none;
+}
