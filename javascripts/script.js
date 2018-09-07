@@ -4,6 +4,7 @@
 
 // TODO: Create game variables
 var player;
+var gameIsInProgress;
 
 ///////////////////////////////////////////////
 /// FUNCTIONS
@@ -32,16 +33,30 @@ function init() {
 // Main game loop
 function mainLoop() {          
     // TODO: Write mainLoop function. This is what's looping throughout the game
+    draw();
+    update();
+    // Recursively call our loop
+    window.requestAnimationFrame(mainLoop);
 }
 
 // Update game piece positions
 function update() {
     // TODO: Write the update function. This updates the internal state of where everything is located
+    // Move the player, left key takes priority over right
+    if (player.left && player.x > 0 + player.size / 2) {
+        player.x -= player.speed;
+    } else if (player.right && player.x < canvas.width - player.size / 2) {
+        player.x += player.speed;
+    };
 }
 
 // Draw everything
 function draw() {
     // TODO: Write the draw function. This handles drawing our content on the canvas
+    // Clear the canvas
+    ctx.fillStyle = '#143642';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
     // Draw the player
     ctx.beginPath();
     ctx.fillStyle = '#f2f2f2';
@@ -67,12 +82,40 @@ function handleGameOver() {
 
 // Move your player on keydown
 document.onkeydown = function(e) {
-    // TODO: handle keydown events for the player movement
+    switch (e.which) {
+        // Controls
+        case 37: // Left
+            if (!gameIsInProgress) {
+                gameIsInProgress = true;
+                mainLoop();
+            }
+            player.left = true; // Will take priority over the right key
+            break;
+        case 39: // Right
+            if (!gameIsInProgress) {
+                gameIsInProgress = true;
+                mainLoop();
+            }
+            player.right = true;
+            break;
+        default:
+            // Do nothing
+    };
 };
 
 // Stop moving your player on keyup
 document.onkeyup = function(e) {
-    // TODO: handle keup events for the player movement
+    switch (e.which) {
+        // Controls
+        case 37: // Left
+            player.left = false; // Will take priority over the right key
+            break;
+        case 39: // Right
+            player.right = false;
+            break;
+        default:
+            // Do nothing
+    };
 };
 
 
