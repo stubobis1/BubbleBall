@@ -79,11 +79,24 @@ function update() {
     } else if (player.right && player.x < canvas.width - player.size / 2) {
         player.x += player.speed;
     };
+
+    // Move the obstacles
+    for (var i = 0; i < obstacles.length; i++) {
+        var obstacle = obstacles[i];
+        
+        // Handle moving the obstacles left and right (just keep going in the same direction)
+        obstacle.x += obstacle.dx;
+
+        // Handle moving the obstacles up and down (bounce on the floor and only bounce up to their set bounce height)
+        if ((obstacle.y > canvas.height - obstacle.type.size / 2) || (obstacle.dy === -1 && obstacle.y < obstacle.type.bounceHeight - obstacle.type.size / 2)) {
+            obstacle.dy = -obstacle.dy;
+        }
+        obstacle.y += (obstacle.type.speed * obstacle.dy);
+    }
 }
 
 // Draw everything
 function draw() {
-    // TODO: Write the draw function. This handles drawing our content on the canvas
     // Clear the canvas
     ctx.fillStyle = '#143642';
     ctx.fillRect(0, 0, canvas.width, canvas.height);
@@ -95,6 +108,19 @@ function draw() {
     ctx.lineWidth = 1;
     ctx.fill();
     ctx.stroke();
+
+    // Draw the obstacles
+    for (var i = 0; i < obstacles.length; i++) {
+        // only draw them if they're in view
+        if (obstacles[i].x >= -200 && obstacles[i].x <= canvas.width + 200) {
+            ctx.beginPath();
+            ctx.fillStyle = obstacles[i].type.color;
+            ctx.arc(obstacles[i].x, obstacles[i].y, obstacles[i].type.size / 2, 0, Math.PI * 2);
+            ctx.lineWidth = 1;
+            ctx.fill();
+            ctx.stroke();
+        }
+    }
 }
 
 // Add a new obstacle
@@ -108,7 +134,6 @@ function addObstacle() {
         dx: direction,
         dy: 1,
     });
-    console.log(obstacles);
 }
 
 // Handle logic when the game ends
