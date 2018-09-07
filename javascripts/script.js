@@ -42,6 +42,7 @@ var obstacleTypes = {
 function init() {
     // TODO: Write init function. This will kick off the game
     gameIsInProgress = false;
+    gameOver = false;
     player = {
         size: 20,
         x: 400,
@@ -63,35 +64,54 @@ function init() {
 
 // Main game loop
 function mainLoop() {          
-    // TODO: Write mainLoop function. This is what's looping throughout the game
-    draw();
-    update();
-    // Recursively call our loop
-    window.requestAnimationFrame(mainLoop);
+    // logic for the game to end or not
+    if (gameIsInProgress && !gameOver) {
+        // draw and update our canvas here
+        draw();
+        update();
+        // Recursively call our loop
+        window.requestAnimationFrame(mainLoop);
+    } else {
+        handleGameOver();
+    }
 }
 
 // Update game piece positions
 function update() {
-    // TODO: Write the update function. This updates the internal state of where everything is located
-    // Move the player, left key takes priority over right
-    if (player.left && player.x > 0 + player.size / 2) {
-        player.x -= player.speed;
-    } else if (player.right && player.x < canvas.width - player.size / 2) {
-        player.x += player.speed;
-    };
+    if (gameIsInProgress) {
+        // Move the player, left key takes priority over right
+        if (player.left && player.x > 0 + player.size / 2) {
+            player.x -= player.speed;
+        } else if (player.right && player.x < canvas.width - player.size / 2) {
+            player.x += player.speed;
+        };
 
-    // Move the obstacles
-    for (var i = 0; i < obstacles.length; i++) {
-        var obstacle = obstacles[i];
-        
-        // Handle moving the obstacles left and right (just keep going in the same direction)
-        obstacle.x += obstacle.dx;
+        // Move the obstacles
+        for (var i = 0; i < obstacles.length; i++) {
+            var obstacle = obstacles[i];
+            
+            // Handle moving the obstacles left and right (just keep going in the same direction)
+            obstacle.x += obstacle.dx;
 
-        // Handle moving the obstacles up and down (bounce on the floor and only bounce up to their set bounce height)
-        if ((obstacle.y > canvas.height - obstacle.type.size / 2) || (obstacle.dy === -1 && obstacle.y < obstacle.type.bounceHeight - obstacle.type.size / 2)) {
-            obstacle.dy = -obstacle.dy;
+            // Handle moving the obstacles up and down (bounce on the floor and only bounce up to their set bounce height)
+            if ((obstacle.y > canvas.height - obstacle.type.size / 2) || (obstacle.dy === -1 && obstacle.y < obstacle.type.bounceHeight - obstacle.type.size / 2)) {
+                obstacle.dy = -obstacle.dy;
+            }
+            obstacle.y += (obstacle.type.speed * obstacle.dy);
+
+            // Check if the player was hit
+            var x = Math.abs(player.x - obstacle.x);
+            var y = Math.abs(player.y - obstacle.y);
+                    
+            // Use pythagorean theorem to find the distance between player and the obstacle
+            var hypotenuse = Math.sqrt(( x * x ) + ( y * y ));
+            
+            // Check to see if they have overlapped
+            if (player.size / 2 + obstacle.type.size / 2 >= hypotenuse) {
+                gameIsInProgress = false;
+                gameOver = true;
+            }
         }
-        obstacle.y += (obstacle.type.speed * obstacle.dy);
     }
 }
 
@@ -138,7 +158,16 @@ function addObstacle() {
 
 // Handle logic when the game ends
 function handleGameOver() {
-    // TODO: Write the handleGameOver function. This executes any logic for when the game ends
+    // Clear the timeout
+    clearInterval(obstacleGeneratorInterval);
+        
+    // set the text that displays on the canvas
+    ctx.fillStyle = '#f1f1f1';
+    ctx.font = '16px monospace';
+    ctx.fillText('GAME OVER', 355, 200);
+
+    // restart the game
+    setTimeout(init, 2000);
 }
 
 ///////////////////////////////////////////////
@@ -150,7 +179,7 @@ document.onkeydown = function(e) {
     switch (e.which) {
         // Controls
         case 37: // Left
-            if (!gameIsInProgress) {
+            if (!gameIsInProgress && !gameOver) {
                 gameIsInProgress = true;
                 obstacleGeneratorInterval = setInterval(addObstacle, 1000);
                 mainLoop();
@@ -158,7 +187,7 @@ document.onkeydown = function(e) {
             player.left = true; // Will take priority over the right key
             break;
         case 39: // Right
-            if (!gameIsInProgress) {
+            if (!gameIsInProgress && !gameOver) {
                 gameIsInProgress = true;
                 obstacleGeneratorInterval = setInterval(addObstacle, 1000);
                 mainLoop();
