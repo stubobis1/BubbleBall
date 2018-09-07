@@ -2,9 +2,37 @@
 /// GAME VARIABLES
 ///////////////////////////////////////////////
 
-// TODO: Create game variables
-var player;
-var gameIsInProgress;
+var gameIsInProgress,
+    gameOver,
+    score,
+    highscore = 0,
+    player,
+    obstacles,
+    obstacleGeneratorInterval;
+
+var obstacleTypes = {
+    small: {
+        color: '#EC9A29',
+        size: 10,
+        bounceHeight: 300,
+        maxStartHeight: 250,
+        speed: 4,
+    },
+    medium: {
+        color: '#0F8B8D',
+        size: 50,
+        bounceHeight: 200,
+        maxStartHeight: 150,
+        speed: 3,
+    },
+    large: {
+        color: '#ADD8E6',
+        size: 100,
+        bounceHeight: 100,
+        maxStartHeight: 50,
+        speed: 2,
+    },
+};
 
 ///////////////////////////////////////////////
 /// FUNCTIONS
@@ -13,6 +41,7 @@ var gameIsInProgress;
 // Initialize variables when the game starts and draw the first frame
 function init() {
     // TODO: Write init function. This will kick off the game
+    gameIsInProgress = false;
     player = {
         size: 20,
         x: 400,
@@ -21,6 +50,8 @@ function init() {
         left: false,
         right: false,
     };
+    obstacles = [];
+    obstacleGeneratorInterval = undefined;
 
     draw();
 
@@ -68,7 +99,16 @@ function draw() {
 
 // Add a new obstacle
 function addObstacle() {
-    // TODO: Write the addObstacle function. This adds new obstacles to the game
+    var newObstacleType = Object.keys(obstacleTypes)[Math.floor(Math.random() * Object.keys(obstacleTypes).length)];
+    var direction = Math.random() > 0.5 ? 1 : -1;
+    obstacles.push({
+        type: obstacleTypes[newObstacleType],
+        x: direction === 1 ? 0 : canvas.width,
+        y: obstacleTypes[newObstacleType].maxStartHeight - Math.floor(Math.random() * obstacleTypes[newObstacleType].maxStartHeight),
+        dx: direction,
+        dy: 1,
+    });
+    console.log(obstacles);
 }
 
 // Handle logic when the game ends
@@ -87,6 +127,7 @@ document.onkeydown = function(e) {
         case 37: // Left
             if (!gameIsInProgress) {
                 gameIsInProgress = true;
+                obstacleGeneratorInterval = setInterval(addObstacle, 1000);
                 mainLoop();
             }
             player.left = true; // Will take priority over the right key
@@ -94,6 +135,7 @@ document.onkeydown = function(e) {
         case 39: // Right
             if (!gameIsInProgress) {
                 gameIsInProgress = true;
+                obstacleGeneratorInterval = setInterval(addObstacle, 1000);
                 mainLoop();
             }
             player.right = true;
