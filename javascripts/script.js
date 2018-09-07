@@ -7,8 +7,6 @@ var gameIsInProgress,
     score,
     highscore = 0,
     player,
-    left,
-    right,
     obstacles,
     obstacleGeneratorInterval;
 
